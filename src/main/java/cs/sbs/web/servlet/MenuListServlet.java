@@ -29,9 +29,9 @@ public class MenuListServlet extends HttpServlet {
         String nameParam = request.getParameter("name");
 
         // 修改这里：空字符串也应该被当作有效搜索，但返回空结果
-        if (nameParam == null) {
+        if (nameParam == null || nameParam.trim().isEmpty()) {
             // 没有name参数：返回空结果
-            out.printf("No");
+            out.println("No");
         } else {
             // 有name参数（包括空字符串）：进行搜索过滤
             String keyword = nameParam.trim().toLowerCase();
