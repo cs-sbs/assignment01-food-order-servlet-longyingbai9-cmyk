@@ -30,11 +30,8 @@ public class MenuListServlet extends HttpServlet {
 
         // 修改这里：空字符串也应该被当作有效搜索，但返回空结果
         if (nameParam == null) {
-            // 没有name参数：返回全部菜单
-            for (int i = 0; i < MENU.size(); i++) {
-                MenuItem item = MENU.get(i);
-                out.printf("%d. %s - $%.0f%n", (i + 1), item.getName(), item.getPrice());
-            }
+            // 没有name参数：返回空结果
+            out.printf("No");
         } else {
             // 有name参数（包括空字符串）：进行搜索过滤
             String keyword = nameParam.trim().toLowerCase();

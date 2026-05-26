@@ -4,7 +4,7 @@ set -euo pipefail
 BASE_URL="http://localhost:8080"
 
 tmp="$(mktemp)"
-status=$(curl -s -o "$tmp" -w "%{http_code}" "$BASE_URL/menu?name=")
+status=$(curl -s -o "$tmp" -w "%{http_code}" "$BASE_URL/menu?name=NotExistFood")
 body="$(cat "$tmp")"
 rm -f "$tmp"
 
