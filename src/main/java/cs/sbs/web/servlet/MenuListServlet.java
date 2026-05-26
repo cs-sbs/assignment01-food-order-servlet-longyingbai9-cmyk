@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MenuListServlet extends HttpServlet {
     private static final List<MenuItem> MENU = new ArrayList<>();
@@ -25,27 +24,34 @@ public class MenuListServlet extends HttpServlet {
         response.setContentType("text/plain;charset=UTF-8");
         PrintWriter out = response.getWriter();
 
-        String nameParam = request.getParameter("name");
-        List<MenuItem> filteredMenu;
-
-        if (nameParam == null) {
-            // 没有name参数，返回全部菜单
-            filteredMenu = MENU;
-        } else if (nameParam.trim().isEmpty()) {
-            // name参数是空字符串，返回空列表
-            filteredMenu = new ArrayList<>();
-        } else {
-            // 有搜索关键词，按名称过滤
-            String keyword = nameParam.toLowerCase();
-            filteredMenu = MENU.stream()
-                    .filter(item -> item.getName().toLowerCase().contains(keyword))
-                    .collect(Collectors.toList());
-        }
-
         out.println("Menu List:");
-        for (int i = 0; i < filteredMenu.size(); i++) {
-            MenuItem item = filteredMenu.get(i);
-            out.printf("%d. %s - $%.0f%n", (i + 1), item.getName(), item.getPrice());
+
+        // 直接从请求URL判断是否包含name参数
+        String queryString = request.getQueryString();
+        boolean hasNameParam = queryString != null && queryString.contains("name");
+
+        if (!hasNameParam) {
+            // 情况1：没有name参数，返回全部菜单
+            for (int i = 0; i < MENU.size(); i++) {
+                MenuItem item = MENU.get(i);
+                out.printf("%d. %s - $%.0f%n", (i + 1), item.getName(), item.getPrice());
+            }
+        } else {
+            // 情况2：有name参数，进行过滤
+            String nameParam = request.getParameter("name");
+            String keyword = (nameParam == null ? "" : nameParam).trim().toLowerCase();
+
+            List<MenuItem> filtered = new ArrayList<>();
+            for (MenuItem item : MENU) {
+                if (item.getName().toLowerCase().contains(keyword)) {
+                    filtered.add(item);
+                }
+            }
+            // 输出过滤后的结果
+            for (int i = 0; i < filtered.size(); i++) {
+                MenuItem item = filtered.get(i);
+                out.printf("%d. %s - $%.0f%n", (i + 1), item.getName(), item.getPrice());
+            }
         }
     }
 }
