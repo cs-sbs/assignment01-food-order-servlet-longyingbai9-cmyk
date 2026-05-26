@@ -26,28 +26,30 @@ public class MenuListServlet extends HttpServlet {
 
         out.println("Menu List:");
 
-        // 直接从请求URL判断是否包含name参数
-        String queryString = request.getQueryString();
-        boolean hasNameParam = queryString != null && queryString.contains("name");
+        String nameParam = request.getParameter("name");
 
-        if (!hasNameParam) {
-            // 情况1：没有name参数，返回全部菜单
+        // 修改这里：空字符串也应该被当作有效搜索，但返回空结果
+        if (nameParam == null) {
+            // 没有name参数：返回全部菜单
             for (int i = 0; i < MENU.size(); i++) {
                 MenuItem item = MENU.get(i);
                 out.printf("%d. %s - $%.0f%n", (i + 1), item.getName(), item.getPrice());
             }
         } else {
-            // 情况2：有name参数，进行过滤
-            String nameParam = request.getParameter("name");
-            String keyword = (nameParam == null ? "" : nameParam).trim().toLowerCase();
-
+            // 有name参数（包括空字符串）：进行搜索过滤
+            String keyword = nameParam.trim().toLowerCase();
             List<MenuItem> filtered = new ArrayList<>();
-            for (MenuItem item : MENU) {
-                if (item.getName().toLowerCase().contains(keyword)) {
-                    filtered.add(item);
+
+            if (!keyword.isEmpty()) {
+                for (MenuItem item : MENU) {
+                    if (item.getName().toLowerCase().contains(keyword)) {
+                        filtered.add(item);
+                    }
                 }
             }
-            // 输出过滤后的结果
+            // 注意：如果keyword为空，filtered保持为空列表
+
+            // 输出过滤结果（可能为空）
             for (int i = 0; i < filtered.size(); i++) {
                 MenuItem item = filtered.get(i);
                 out.printf("%d. %s - $%.0f%n", (i + 1), item.getName(), item.getPrice());
