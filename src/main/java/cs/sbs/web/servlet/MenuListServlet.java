@@ -31,7 +31,6 @@ public class MenuListServlet extends HttpServlet {
         // 修改这里：空字符串也应该被当作有效搜索，但返回空结果
         if (nameParam == null || nameParam.trim().isEmpty()) {
             // 没有name参数：返回空结果
-            out.println("No");
         } else {
             // 有name参数（包括空字符串）：进行搜索过滤
             String keyword = nameParam.trim().toLowerCase();
@@ -44,13 +43,20 @@ public class MenuListServlet extends HttpServlet {
                     }
                 }
             }
-            // 注意：如果keyword为空，filtered保持为空列表
+          if (!filtered.isEmpty()){
+              // 输出过滤结果
+              for (int i = 0; i < filtered.size(); i++) {
+                  MenuItem item = filtered.get(i);
+                  out.printf("%d. %s - $%.0f%n", (i + 1), item.getName(), item.getPrice());
+              }
+          }else {
+              out.println("No matching items found.");
+          }
 
-            // 输出过滤结果（可能为空）
-            for (int i = 0; i < filtered.size(); i++) {
-                MenuItem item = filtered.get(i);
-                out.printf("%d. %s - $%.0f%n", (i + 1), item.getName(), item.getPrice());
-            }
+
+
+
+
         }
     }
 }
