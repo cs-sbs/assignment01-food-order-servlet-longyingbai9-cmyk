@@ -29,13 +29,13 @@ public class MenuListServlet extends HttpServlet {
         List<MenuItem> filteredMenu;
 
         if (nameParam == null) {
-            // 没有name参数，返回全部菜单
+            // 情况1：没有name参数 → 返回全部菜单
             filteredMenu = MENU;
         } else if (nameParam.trim().isEmpty()) {
-            // name参数是空字符串，返回空列表
+            // 情况2：name参数是空字符串 → 返回空列表
             filteredMenu = new ArrayList<>();
         } else {
-            // 有搜索关键词，按名称过滤
+            // 情况3：有有效关键词 → 按名称过滤
             String keyword = nameParam.toLowerCase();
             filteredMenu = MENU.stream()
                     .filter(item -> item.getName().toLowerCase().contains(keyword))
