@@ -26,9 +26,16 @@ public class MenuListServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         String nameParam = request.getParameter("name");
-        List<MenuItem> filteredMenu = MENU;
+        List<MenuItem> filteredMenu;
 
-        if (nameParam != null && !nameParam.trim().isEmpty()) {
+        if (nameParam == null) {
+            // 没有name参数，返回全部菜单
+            filteredMenu = MENU;
+        } else if (nameParam.trim().isEmpty()) {
+            // name参数是空字符串，返回空列表
+            filteredMenu = new ArrayList<>();
+        } else {
+            // 有搜索关键词，按名称过滤
             String keyword = nameParam.toLowerCase();
             filteredMenu = MENU.stream()
                     .filter(item -> item.getName().toLowerCase().contains(keyword))
